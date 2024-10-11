@@ -5,8 +5,13 @@ import {useEffect, useState} from 'react';
 import Request from "./API/Request";
 import ComponentLoader from "./common/Loader/ComponentLoader";
 import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import Button from "@mui/material/Button";
 function AboutUs({theme}) {
     const [loading, setLoading] = useState(false)
+    const [open, setOpen] = useState(false);
+    const handleClose = () => setOpen(false);
+    const [currentMember, setCurrentMember] = useState(null)
     const [members, setMembers] = useState([
         {
             name: 'Abe',
@@ -59,6 +64,19 @@ function AboutUs({theme}) {
         }
         // Add more members as needed
     ]);
+    const modalStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
+
+
     const styles = {
         container: {
           padding: theme.spacing(8, 0),
@@ -105,10 +123,49 @@ function AboutUs({theme}) {
             setLoading(false)
         }
 
+        function handleOpen(mem) {
+            console.log(mem)
+            setOpen(true);
+            setCurrentMember(mem);
+        }
+
 
       return (
         <ThemeProvider theme={theme}>
         <section style={styles.container}>
+            {currentMember &&
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+
+                <Box sx={modalStyle}>
+                    <Box
+                        sx={{
+                            display: 'flex', // Flexbox to center
+                            flexDirection: 'column',
+                            justifyContent: 'center', // Horizontally center
+                            alignItems: 'center', // Vertically center
+                        }}
+                    >
+                    {/*<Avatar alt={member.name} src={member.image} sx={styles.avatar} variant="square"/>*/}
+                    <img src={currentMember.image} alt={currentMember.name} style={styles.avatar} />
+                    <Typography variant="subtitle1" style={styles.name} >
+                        {currentMember.name}
+                    </Typography>
+                    <Typography variant="body2" style={styles.position}>
+                        {currentMember.position}
+                    </Typography>
+                        <Typography variant="body2"  component="a"  target="_blank" align={"left"}>
+                            {currentMember.description}
+                        </Typography>
+                    </Box>
+                </Box>
+
+            </Modal>
+            }
           <div>
             {/* Big photo */}
             <img src="https://source.unsplash.com/random/800x400" alt="Team" />
@@ -128,7 +185,6 @@ function AboutUs({theme}) {
 
             {!loading && members.map((member) => (
               <Grid item key={member.name} style={styles.member}>
-                  {console.log(member.image)}
                 {/*<Avatar alt={member.name} src={member.image} sx={styles.avatar} variant="square"/>*/}
                 <img src={member.image} alt={member.name} style={styles.avatar} />
                   <Typography variant="subtitle1" style={styles.name} >
@@ -138,9 +194,10 @@ function AboutUs({theme}) {
                   {member.position}
                 </Typography>
                   <Box sx={{ display: 'inline-flex', maxWidth: 200 }}>
-                      <Typography variant="body2"  component="a"  target="_blank" align={"left"}>
-                          {member.description}
-                      </Typography>
+                      <Button onClick={e => {handleOpen(member)}}>Learn more</Button>
+                      {/*<Typography variant="body2"  component="a"  target="_blank" align={"left"}>*/}
+                      {/*    {member.description}*/}
+                      {/*</Typography>*/}
                   </Box>
               </Grid>
             ))}

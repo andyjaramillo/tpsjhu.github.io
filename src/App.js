@@ -26,7 +26,6 @@ import StateProvider from "./Provider/StateProvider";
 import Loader from "./common/Loader/Loader";
 import NewEvent from "./NewEvent";
 import EventDisplay from "./EventDisplay";
-
 // I don't think createTheme is created on time before it is passed to the different routes initially
 const theme = createTheme({
   typography: {
